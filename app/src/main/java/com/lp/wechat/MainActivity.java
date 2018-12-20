@@ -21,7 +21,7 @@ import com.lp.wechat.dialog.titlemenu.ActionItem;
 import com.lp.wechat.dialog.titlemenu.TitlePopup;
 import com.lp.wechat.dialog.titlemenu.TitlePopup.OnItemOnClickListener;
 import com.lp.wechat.view.activity.AddGroupChatActivity;
-import com.lp.wechat.view.activity.CetMoneyActivity;
+import com.lp.wechat.view.activity.GetMoneyActivity;
 import com.lp.wechat.view.activity.PublicActivity;
 import com.lp.wechat.view.fragment.Fragment_Contacts;
 import com.lp.wechat.view.fragment.Fragment_Discover;
@@ -164,7 +164,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                     break;
                 case 3:
                     //收付款
-                    Utils.start_Activity(MainActivity.this, CetMoneyActivity.class);
+                    Utils.start_Activity(MainActivity.this, GetMoneyActivity.class);
                     break;
                 default:
                     break;

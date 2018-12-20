@@ -6,6 +6,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Environment;
+import android.text.TextUtils;
 
 import com.baidu.frontia.FrontiaApplication;
 import com.easemob.chat.EMChat;
@@ -18,6 +20,8 @@ import com.easemob.chat.OnNotificationClickListener;
 import com.lp.wechat.chat.ChatActivity;
 import com.lp.wechat.chat.VoiceCallActivity;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -171,5 +175,52 @@ public class WcApp extends FrontiaApplication{
             startActivity(i);
         }
 
+    }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        try {
+            deleteCacheDirFile(getHJYCacheDir(), true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.gc();
+    }
+
+    public static String getHJYCacheDir() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+            return Environment.getExternalStorageDirectory().toString() + "/Health/Cache";
+        else
+            return "/System/com.lp.Walk/Walk/Cache";
+    }
+
+    public static String getHJYDownLoadDir() {
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED))
+            return Environment.getExternalStorageDirectory().toString() + "/Walk/Download";
+        else {
+            return "/System/com.lp.Walk/Walk/Download";
+        }
+    }
+
+    public static void deleteCacheDirFile(String filePath, boolean deleteThisPath) throws IOException {
+        if (!TextUtils.isEmpty(filePath)) {
+            File file = new File(filePath);
+            if (file.isDirectory()) {// 处理目录
+                File files[] = file.listFiles();
+                for (int i = 0; i < files.length; i++) {
+                    deleteCacheDirFile(files[i].getAbsolutePath(), true);
+                }
+            }
+            if (deleteThisPath) {
+                if (!file.isDirectory()) {// 如果是文件，删除
+                    file.delete();
+                } else {// 目录
+                    if (file.listFiles().length == 0) {// 目录下没有文件或者目录，删除
+                        file.delete();
+                    }
+                }
+            }
+        }
     }
 }
