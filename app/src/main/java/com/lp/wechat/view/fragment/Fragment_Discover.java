@@ -1,17 +1,98 @@
 package com.lp.wechat.view.fragment;
 
+import android.app.Activity;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 
-/**
- * Created by LP on 2017/12/18.
- * 发现
- */
-public class Fragment_Discover extends Fragment implements OnClickListener{
+import com.lp.wechat.Constants;
+import com.lp.wechat.R;
+import com.lp.wechat.common.Utils;
+import com.lp.wechat.view.activity.AlbumActivity;
+import com.lp.wechat.view.activity.PublicActivity;
+import com.lp.wechat.zxing.CaptureActivity;
+
+import org.apache.http.message.BasicNameValuePair;
+
+// 发现
+public class Fragment_Discover extends Fragment implements OnClickListener {
+
+    private Activity ctx;
+    private View layout;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (layout == null) {
+            ctx = this.getActivity();
+            layout = ctx.getLayoutInflater().inflate(R.layout.fragment_discover, null);
+            initViews();
+            initData();
+            setOnListener();
+        } else {
+            ViewGroup parent = (ViewGroup) layout.getParent();
+            if (parent != null) {
+                parent.removeView(layout);
+            }
+        }
+        return layout;
+    }
+
+    private void initViews() {
+        // TODO Auto-generated method stub
+
+    }
+
+    private void setOnListener() {
+        // TODO Auto-generated method stub
+        layout.findViewById(R.id.txt_pengyouquan).setOnClickListener(this);
+        layout.findViewById(R.id.txt_saoyisao).setOnClickListener(this);
+        layout.findViewById(R.id.txt_yaoyiyao).setOnClickListener(this);
+        layout.findViewById(R.id.txt_nearby).setOnClickListener(this);
+        layout.findViewById(R.id.txt_piaoliuping).setOnClickListener(this);
+        layout.findViewById(R.id.txt_shop).setOnClickListener(this);
+        layout.findViewById(R.id.txt_game).setOnClickListener(this);
+    }
+
+    private void initData() {
+        // TODO Auto-generated method stub
+
+    }
 
     @Override
     public void onClick(View v) {
-
+        switch (v.getId()) {
+            case R.id.txt_pengyouquan:// 朋友圈
+                Utils.start_Activity(getActivity(), AlbumActivity.class);
+                break;
+            case R.id.txt_saoyisao:// 扫一扫
+                Utils.start_Activity(getActivity(), CaptureActivity.class);
+                break;
+            case R.id.txt_yaoyiyao:
+                Utils.start_Activity(getActivity(), PublicActivity.class,
+                        new BasicNameValuePair(Constants.NAME, getString(R.string.shake)));
+                break;
+            case R.id.txt_nearby:
+                Utils.start_Activity(getActivity(), PublicActivity.class,
+                        new BasicNameValuePair(Constants.NAME, getString(R.string.people_nearby)));
+                break;
+            case R.id.txt_piaoliuping:
+                Utils.start_Activity(getActivity(), PublicActivity.class,
+                        new BasicNameValuePair(Constants.NAME, getString(R.string.drift_bottle)));
+                break;
+            case R.id.txt_shop:
+                Utils.start_Activity(getActivity(), PublicActivity.class,
+                        new BasicNameValuePair(Constants.NAME, getString(R.string.shopping)));
+                break;
+            case R.id.txt_game:
+                Utils.start_Activity(getActivity(), PublicActivity.class,
+                        new BasicNameValuePair(Constants.NAME, getString(R.string.games)));
+                break;
+            default:
+                break;
+        }
     }
 }
+

@@ -1,4 +1,4 @@
-package com.lp.wechat.widget.FlippingImageView.FlippingImageView;
+package com.lp.wechat.widget.FlippingImageView;
 
 import android.graphics.Camera;
 import android.graphics.Matrix;

@@ -9,7 +9,7 @@ import android.view.KeyEvent;
 import com.lp.wechat.WcApp;
 import com.lp.wechat.dialog.FlippingLoadingDialog;
 import com.lp.wechat.net.NetClient;
-import com.lp.wechat.utils.Utils;
+import com.lp.wechat.common.Utils;
 
 import org.apache.http.message.BasicNameValuePair;
 
@@ -55,7 +55,7 @@ public abstract class BaseActivity extends Activity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Utils.finish_Activity(this);
+            Utils.finish(this);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -98,7 +98,7 @@ public abstract class BaseActivity extends Activity {
      * @param activity
      */
     public void finish(Activity activity) {
-        Utils.finish_Activity(activity);
+        Utils.finish(activity);
     }
 
     /**

@@ -1,58 +1,71 @@
 package com.lp.wechat;
 
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
 /**
- * Created by LP on 2017/11/30.
- *全局异常处理
+ * @author juns create time： 2013-8-13 全局异常处理
  */
+public class CrashHandler implements UncaughtExceptionHandler {
+	public static final String TAG = "CrashHandler";
+	private static CrashHandler INSTANCE = new CrashHandler();
+	private Context mContext;
+	@SuppressWarnings("unused")
+	private UncaughtExceptionHandler mDefaultHandler;
 
-public class CrashHandler implements UncaughtExceptionHandler{
-    private static final String TAG = CrashHandler.class.getSimpleName();
+	private CrashHandler() {
+	}
 
-    private static CrashHandler crashHandler = new CrashHandler();
-    private Context mCxt;
+	public static CrashHandler getInstance() {
+		return INSTANCE;
+	}
 
-    @SuppressWarnings("unused")
-    private Thread.UncaughtExceptionHandler mDefaultHandler;
+	public void init(Context ctx) {
+		mContext = ctx;
+		mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
+		Thread.setDefaultUncaughtExceptionHandler(this);
+	}
 
-    private CrashHandler(){}
+	@Override
+	public void uncaughtException(Thread thread, final Throwable ex) {
+		new Thread() {
+			@Override
+			public void run() {
+				Builder builder = new Builder(WcApp.getInstance());
+				builder.setIcon(R.drawable.icon).setTitle(R.string.app_name)
+						.setMessage("出了点小意外")
+						.setPositiveButton("重新启动", new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Intent i = mContext.getPackageManager()
+										.getLaunchIntentForPackage(
+												mContext.getPackageName());
+								i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+								mContext.startActivity(i);
+								WcApp.getInstance().exit();
+							}
+						}).setNegativeButton("取消", null).show();
+			}
+		}.start();
+	}
 
-    public static CrashHandler getInstance(){
-        return crashHandler;
-    }
-
-    public void init(Context mContext) {
-        this.mCxt = mContext;
-        mDefaultHandler = Thread.getDefaultUncaughtExceptionHandler();
-        Thread.setDefaultUncaughtExceptionHandler(this);
-    }
-
-    @Override
-    public void uncaughtException(Thread t, Throwable e) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                //TODO
-
-            }
-        }).start();
-    }
-
-
-    /**
-     * 自定义错误处理,收集错误信息 发送错误报告等操作均在此完成. 开发者可以根据自己的情况来自定义异常处理逻辑
-     *
-     * @param ex
-     * @return true:如果处理了该异常信息;否则返回false
-     */
-    @SuppressWarnings("unused")
-    private boolean handleException(Throwable ex) {
-        if (ex == null) {
-            return true;
-        }
-        return true;
-    }
+	/**
+	 * 自定义错误处理,收集错误信息 发送错误报告等操作均在此完成. 开发者可以根据自己的情况来自定义异常处理逻辑
+	 * 
+	 * @param ex
+	 * @return true:如果处理了该异常信息;否则返回false
+	 */
+	@SuppressWarnings("unused")
+	private boolean handleException(Throwable ex) {
+		if (ex == null) {
+			return true;
+		}
+		return true;
+	}
 }

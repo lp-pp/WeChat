@@ -17,7 +17,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.lp.wechat.R;
-import com.lp.wechat.utils.ViewHodler;
+import com.lp.wechat.common.ViewHolder;
 
 import java.util.ArrayList;
 
@@ -140,7 +140,7 @@ public class TitlePopup extends PopupWindow{
                     convertView = LayoutInflater.from(mContext)
                             .inflate(R.layout.layout_item_pop, parent,false);
                 }
-                TextView textView = ViewHodler.get(convertView, R.id.txt_title_pop);
+                TextView textView = ViewHolder.get(convertView, R.id.txt_title_pop);
                 textView.setTextColor(mContext.getResources().getColor(R.color.white));
                 textView.setTextSize(16);
                 //设置文本垂直居中

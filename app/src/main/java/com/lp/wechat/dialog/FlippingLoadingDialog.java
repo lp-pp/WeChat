@@ -4,7 +4,7 @@ import android.content.Context;
 import android.widget.TextView;
 
 import com.lp.wechat.R;
-import com.lp.wechat.widget.FlippingImageView.FlippingImageView.FlippingImageView;
+import com.lp.wechat.widget.FlippingImageView.FlippingImageView;
 
 public class FlippingLoadingDialog extends BaseDialog {
 

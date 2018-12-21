@@ -1,12 +1,13 @@
-package com.lp.wechat.widget.FlippingImageView.FlippingImageView;
+package com.lp.wechat.widget.FlippingImageView;
 
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
+import com.lp.wechat.widget.FlippingImageView.RotateAnimation;
+import com.lp.wechat.widget.FlippingImageView.RotateAnimation.Mode;
 
 public class FlippingImageView extends ImageView {
 
@@ -26,11 +27,9 @@ public class FlippingImageView extends ImageView {
     }
 
     private void setRotateAnimation() {
-        if (mIsHasAnimation == false && getWidth() > 0
-                && getVisibility() == View.VISIBLE) {
+        if (mIsHasAnimation == false && getWidth() > 0 && getVisibility() == View.VISIBLE) {
             mIsHasAnimation = true;
-            mAnimation = new RotateAnimation(getWidth() / 2.0F,
-                    getHeight() / 2.0F, Mode.Y);
+            mAnimation = new RotateAnimation(getWidth() / 2.0F, getHeight() / 2.0F, Mode.Y);
             mAnimation.setDuration(1000L);
             mAnimation.setInterpolator(new LinearInterpolator());
             mAnimation.setRepeatCount(-1);
