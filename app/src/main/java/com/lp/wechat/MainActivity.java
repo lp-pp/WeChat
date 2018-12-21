@@ -4,22 +4,30 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.easemob.chat.EMChat;
 import com.easemob.chat.EMChatManager;
+import com.easemob.chat.EMGroupManager;
+import com.easemob.chat.GroupChangeListener;
 import com.lp.wechat.utils.Utils;
 import com.lp.wechat.dialog.WarnTipDialog;
 import com.lp.wechat.dialog.titlemenu.ActionItem;
 import com.lp.wechat.dialog.titlemenu.TitlePopup;
 import com.lp.wechat.dialog.titlemenu.TitlePopup.OnItemOnClickListener;
+import com.lp.wechat.view.UpdateService;
 import com.lp.wechat.view.activity.AddGroupChatActivity;
 import com.lp.wechat.view.activity.GetMoneyActivity;
 import com.lp.wechat.view.activity.PublicActivity;
@@ -31,6 +39,9 @@ import com.lp.wechat.zxing.CaptureActivity;
 
 import org.apache.http.message.BasicNameValuePair;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 /**
  * Created by LP on 2017/11/30.
  */
@@ -39,7 +50,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private static final String TAG = MainActivity.class.getSimpleName();
     private TitlePopup titlePopup;
     private WarnTipDialog tipDialog;
-    private NewMessageBroadcastReceiver nMsgReceiver;
+    private NewMessageBroadcastReceiver newMsgReceiver;
     private TextView tv_title;
     private ImageView img_right;
     private TextView tv_unreadMsgLable;  //未读消息TextView
@@ -56,6 +67,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private int index;
     private int currentTabIndex; //当前fragment的index
 
+    private static final String WECHA_BRODCAST_ACTION = "com.lp.wechat.Brodcast";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,6 +244,36 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
+    int keyBackClickCount = 0;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Log.d(TAG, "onKeyDown: keycode = " + keyCode);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            switch (keyBackClickCount++) {
+                case 0:
+                    Toast.makeText(this, "再次按返回键退出", Toast.LENGTH_SHORT).show();
+                    Timer time = new Timer();
+                    time.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            keyBackClickCount = 0;
+                        }
+                    }, 3000);
+                    break;
+                case 1:
+                    EMChatManager.getInstance().logout();
+                    WcApp.getInstance().exit();
+                    finish();
+                    overridePendingTransition(R.anim.push_up_in,R.anim.push_up_out);
+                    break;
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -242,9 +284,49 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         super.onDestroy();
     }
 
+    private void initReceiver() {
+        Intent intent = new Intent(this, UpdateService.class);
+        startService(intent);
+        registerReceiver(new MyBroadcastReceiver(), new IntentFilter(WECHA_BRODCAST_ACTION));
+        // 注册一个接收消息的BroadcastReceiver
+        newMsgReceiver = new NewMessageBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter(EMChatManager
+                .getInstance().getNewMessageBroadcastAction());
+        intentFilter.setPriority(3);
+        registerReceiver(newMsgReceiver, intentFilter);
 
-    public void initReceiver() {
-        //TODO
+        // 注册一个ack回执消息的BroadcastReceiver
+        IntentFilter ackMessageIntentFilter = new IntentFilter(EMChatManager
+                .getInstance().getAckMessageBroadcastAction());
+        ackMessageIntentFilter.setPriority(3);
+        registerReceiver(ackMessageReceiver, ackMessageIntentFilter);
+
+        // 注册一个透传消息的BroadcastReceiver
+        IntentFilter cmdMessageIntentFilter = new IntentFilter(EMChatManager
+                .getInstance().getCmdMessageBroadcastAction());
+        cmdMessageIntentFilter.setPriority(3);
+        registerReceiver(cmdMessageReceiver, cmdMessageIntentFilter);
+        // setContactListener监听联系人的变化等
+        // EMContactManager.getInstance().setContactListener(
+        // new MyContactListener());
+        // 注册一个监听连接状态的listener
+        // EMChatManager.getInstance().addConnectionListener(
+        // new MyConnectionListener());
+        // // 注册群聊相关的listener
+        EMGroupManager.getInstance().addGroupChangeListener(new MyGroupChangeListener());
+        // 通知sdk，UI 已经初始化完毕，注册了相应的receiver和listener, 可以接受broadcast了
+        EMChat.getInstance().setAppInited();
+    }
+
+    // 自己联系人 群组数据返回监听
+    public class MyBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // Bundle bundle = intent.getExtras();
+            msgFragment.refresh();
+            contactListFragment.refresh();
+        }
     }
 
     /**
@@ -256,6 +338,36 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         public void onReceive(Context context, Intent intent) {
 
         }
+
+    }
+
+    /**
+     * 消息回执BroadcastReceiver
+     */
+    private BroadcastReceiver ackMessageReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
+
+    /**
+     * 透传消息BroadcastReceiver
+     */
+    private BroadcastReceiver cmdMessageReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+        }
+    };
+
+    /**
+     * MyGroupChangeListener
+     */
+    private class MyGroupChangeListener implements GroupChangeListener {
+
 
     }
 

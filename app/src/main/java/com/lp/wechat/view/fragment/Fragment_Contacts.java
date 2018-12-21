@@ -22,4 +22,8 @@ public class Fragment_Contacts extends Fragment implements OnClickListener,
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
     }
+
+    public void refresh() {
+
+    }
 }

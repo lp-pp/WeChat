@@ -13,7 +13,7 @@ import com.lp.wechat.utils.Utils;
 
 import org.apache.http.message.BasicNameValuePair;
 
-public class BaseActivity extends Activity {
+public abstract class BaseActivity extends Activity {
     private static final String TAG = BaseActivity.class.getSimpleName();
 
     protected Activity mContext;
@@ -43,9 +43,19 @@ public class BaseActivity extends Activity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            Utils.finish(this);
+            Utils.finish_Activity(this);
             return true;
         }
         return super.onKeyDown(keyCode, event);
@@ -78,8 +88,7 @@ public class BaseActivity extends Activity {
      * @param cls
      * @param name
      */
-    public void start_Activity(Activity activity, Class<?> cls,
-                               BasicNameValuePair... name) {
+    public void start_Activity(Activity activity, Class<?> cls, BasicNameValuePair... name) {
         Utils.start_Activity(activity, cls, name);
     }
 
