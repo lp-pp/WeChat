@@ -418,7 +418,8 @@ public class TouchImageView extends ImageView {
 		// ...
 		float x = event.getX(0) - event.getX(1);
 		float y = event.getY(0) - event.getY(1);
-		return FloatMath.sqrt(x*x + y*y);
+		//return FloatMath.sqrt(x*x + y*y);
+		return 0;
 	}
 
 	/** Calculate the mid point of the first two fingers */

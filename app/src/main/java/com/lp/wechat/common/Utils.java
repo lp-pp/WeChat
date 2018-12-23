@@ -118,7 +118,7 @@ public class Utils {
 		notification.flags = Notification.FLAG_AUTO_CANCEL;
 		PendingIntent contentIntent = PendingIntent.getActivity(context, 0, i,
 				PendingIntent.FLAG_UPDATE_CURRENT);
-		notification.setLatestEventInfo(context, Title, content, contentIntent);
+		//notification.setLatestEventInfo(context, Title, content, contentIntent);
 		mn.notify(0, notification);
 	}
 
