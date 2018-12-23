@@ -1,4 +1,0 @@
-#Sun Dec 23 20:53:29 CST 2018
-base.0=/Users/mac/Desktop/lp/android-studio/GitHub/WeChat/app/build/intermediates/transforms/dexMerger/release/0
-path.0=classes.dex
-renamed.0=classes.dex

@@ -31,7 +31,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            //signingConfig signingConfigs.TCLKey
+            signingConfig signingConfigs.TCLKey
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             applicationVariants.all { variant ->
                 variant.outputs.all { output ->
@@ -40,7 +40,7 @@ android {
             }
         }
         debug {
-            //signingConfig signingConfigs.TCLKey
+            signingConfig signingConfigs.TCLKey
         }
     }
     compileOptions {
