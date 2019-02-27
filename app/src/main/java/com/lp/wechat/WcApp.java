@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.baidu.frontia.FrontiaApplication;
 import com.easemob.chat.EMChat;
@@ -43,7 +44,7 @@ public class WcApp extends FrontiaApplication{
     }
 
     // 构造方法, 实例化一次
-    public synchronized static WcApp getInstance(){
+    public static WcApp getInstance(){
         if (instance == null) {
             instance = new WcApp();
         }
@@ -73,6 +74,7 @@ public class WcApp extends FrontiaApplication{
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d(TAG, "onCreate: ");
         mContext = getApplicationContext();
         initEMChat();
         EMChat.getInstance().init(mContext);

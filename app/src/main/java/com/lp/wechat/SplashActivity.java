@@ -22,10 +22,12 @@ import com.lp.wechat.common.Utils;
 import com.lp.wechat.view.activity.LoginActivity;
 
 public class SplashActivity extends Activity {
+	private static final String TAG = SplashActivity.class.getSimpleName();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.d(TAG, "onCreate: ");
 		setContentView(R.layout.activity_start);
 		// initBaiduPush();
 		// initData();

@@ -3,6 +3,7 @@ package com.lp.wechat.net;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.juns.health.net.loopj.android.http.AsyncHttpClient;
@@ -10,6 +11,7 @@ import com.juns.health.net.loopj.android.http.JsonHttpResponseHandler;
 import com.juns.health.net.loopj.android.http.RequestParams;
 import com.lp.wechat.Constants;
 import com.lp.wechat.R;
+import com.lp.wechat.SplashActivity;
 import com.lp.wechat.WcApp;
 import com.lp.wechat.common.NetUtil;
 import com.lp.wechat.common.Utils;
@@ -27,6 +29,7 @@ import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import java.io.File;
 
 public class NetClient {
+	private static final String TAG = NetClient.class.getSimpleName();
 
 	private static Context context;
 	// http 请求
@@ -50,8 +53,7 @@ public class NetClient {
 	}
 
 	static {
-		ActivityManager am = (ActivityManager) WcApp.getInstance()
-				.getSystemService(Context.ACTIVITY_SERVICE);
+		ActivityManager am = (ActivityManager) WcApp.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
 		int memClass = am.getMemoryClass();
 		int cacheSize = 1024 * 1024 * memClass / 4; // 硬引用缓存容量，为系统可用内存的1/4
 
